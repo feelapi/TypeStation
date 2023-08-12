@@ -1,0 +1,29 @@
+{
+  "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "outDir": "./lib",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "types": ["vite/client"],
+  },
+  "include": [
+    "./src/**/*.ts",
+  ],
+  "exclude": [
+    "lib",
+    "node_modules",
+    "./src/backend/**/*.ts"
+  ]
+}
