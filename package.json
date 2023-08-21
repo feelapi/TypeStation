@@ -36,7 +36,6 @@
     "@itwin/core-backend": "4.0.7",
     "@itwin/core-bentley": "4.0.7",
     "@itwin/core-common": "4.0.7",
-    "@itwin/core-electron": "4.0.7",
     "@itwin/core-frontend": "4.0.7",
     "@itwin/core-geometry": "4.0.7",
     "@itwin/core-i18n": "4.0.7",

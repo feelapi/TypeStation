@@ -117,7 +117,6 @@ export default defineConfig(() => {
       // overoptimized dependencies in the same monorepo (vite converts all cjs to esm)
       include: [
         "@itwin/core-common", // for opening iModel error
-        "@itwin/core-electron/lib/cjs/ElectronFrontend", // import from module error
         "@itwin/core-frontend", // file in repository uses require (cjs)
       ],
     },

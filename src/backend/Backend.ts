@@ -5,7 +5,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { Logger, LogLevel, ProcessDetector } from "@itwin/core-bentley";
-import { ElectronHost, ElectronHostOptions } from "@itwin/core-electron/lib/cjs/ElectronBackend";
+import { ElectronHost, ElectronHostOptions } from "./ElectronHost";
 import { IModelHost, IModelHostOptions, LocalhostIpcHost } from "@itwin/core-backend";
 import { IModelReadRpcInterface, IModelTileRpcInterface, RpcInterfaceDefinition, RpcManager, SnapshotIModelRpcInterface } from "@itwin/core-common";
 import { DtaConfiguration, getConfig } from "../common/DtaConfiguration";
