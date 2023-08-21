@@ -32,7 +32,7 @@ function log(msg: string) {
  *
  * To run:
 ```
-  cd test-apps\display-test-app
+  cd test-apps\TypeStation
   npm run build:backend
   node lib\backend\SetToStandalone.js [iModel-filename]
 ```
@@ -93,7 +93,7 @@ async function run() {
     return;
   }
 
-  await IModelHost.startup({ profileName: "display-test-app" });
+  await IModelHost.startup({ profileName: "TypeStation" });
 
   const rootPath = process.argv[2];
   if (fs.statSync(rootPath).isDirectory())

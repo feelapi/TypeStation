@@ -204,14 +204,14 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions) => {
     logTileLoadTimeThreshold: 3,
     logTileSizeThreshold: 500000,
     cacheDir: process.env.IMJS_BRIEFCASE_CACHE_LOCATION,
-    profileName: "display-test-app"
+    profileName: "TypeStation"
   };
 
   const opts = {
     iModelHost,
     electronHost: hostOpts,
     nativeHost: {
-      applicationName: "display-test-app",
+      applicationName: "TypeStation",
     },
     localhostIpcHost: {
       noServer: true,

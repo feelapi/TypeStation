@@ -40,7 +40,7 @@ const dtaWebMain = (async () => {
   Logger.logTrace("SVT", `config = ${JSON.stringify(serverConfig)}`);
 
   // Set up the ability to serve the supported rpcInterfaces via web requests
-  const cloudConfig = BentleyCloudRpcManager.initializeImpl({ info: { title: "display-test-app", version: "v1.0" } }, getRpcInterfaces());
+  const cloudConfig = BentleyCloudRpcManager.initializeImpl({ info: { title: "TypeStation", version: "v1.0" } }, getRpcInterfaces());
 
   const app = express();
   enableWs(app);
@@ -68,7 +68,7 @@ const dtaWebMain = (async () => {
   // ---------------------------------------------
   app.set("port", serverConfig.port);
 
-  const announce = () => console.log(`***** display-test-app listening on ${serverConfig.baseUrl}:${app.get("port")}`);
+  const announce = () => console.log(`***** TypeStation listening on ${serverConfig.baseUrl}:${app.get("port")}`);
 
   if (serverOptions === undefined) {
     DtaRpcInterface.backendServer = app.listen(app.get("port"), announce);

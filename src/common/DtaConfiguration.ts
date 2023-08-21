@@ -71,7 +71,7 @@ export interface DtaOtherConfiguration {
   gpuMemoryLimit?: string | number; // see GpuMemoryLimit in core-frontend for supported string values
 }
 
-/** Parameters for starting display-test-app with a specified initial configuration */
+/** Parameters for starting TypeStation with a specified initial configuration */
 export type DtaConfiguration = DtaBooleanConfiguration & DtaStringConfiguration & DtaNumberConfiguration & DtaOtherConfiguration;
 
 let configuration: DtaConfiguration | undefined;
@@ -90,7 +90,7 @@ export const getConfig = (): DtaConfiguration => {
   if (ProcessDetector.isMobileAppBackend)
     return configuration;
 
-  // Currently display-test-app ONLY supports opening files from local disk - i.e., "standalone" mode.
+  // Currently TypeStation ONLY supports opening files from local disk - i.e., "standalone" mode.
   // At some point we will reinstate ability to open from hub.
   configuration.standalone = true;
   configuration.iModelName = process.env.IMJS_STANDALONE_FILENAME;

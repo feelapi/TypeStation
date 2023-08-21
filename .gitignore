@@ -51,3 +51,5 @@ common/autoinstallers/*/.npmrc
 common/api/summary/summary.exports.csv
 
 debug.log
+/.vite-inspect
+/.static-assets
