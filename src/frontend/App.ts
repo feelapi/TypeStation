@@ -5,8 +5,6 @@
 import "@bentley/icons-generic-webfont/dist/bentley-icons-generic-webfont.css";
 import { GuidString, ProcessDetector } from "@itwin/core-bentley";
 import { ElectronApp, ElectronAppOpts } from "./ElectronApp";
-import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
-import { IModelsClient } from "@itwin/imodels-client-management";
 import { FrontendDevTools } from "@itwin/frontend-devtools";
 import { HyperModeling } from "@itwin/hypermodeling-frontend";
 import {
@@ -205,13 +203,6 @@ class ExitTool extends Tool {
   }
 }
 
-function createHubAccess(configuration: DtaConfiguration) {
-  if (configuration.urlPrefix) {
-    return new FrontendIModelsAccess(new IModelsClient({ api: { baseUrl: `https://${configuration.urlPrefix}api.bentley.com/imodels` } }));
-  } else {
-    return new FrontendIModelsAccess();
-  }
-}
 
 export class DisplayTestApp {
   private static _surface?: Surface;
@@ -252,8 +243,7 @@ export class DisplayTestApp {
             ? { key: "key", value: configuration.bingMapsKey }
             : undefined,
         },
-        /* eslint-enable @typescript-eslint/naming-convention */
-        hubAccess: createHubAccess(configuration),
+
         localization: new ITwinLocalization({ detectorOptions: { order: ["htmlTag"] } }),
       },
       localhostIpcApp: {

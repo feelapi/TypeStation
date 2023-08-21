@@ -47,8 +47,6 @@
     "@itwin/frontend-devtools": "4.0.7",
     "@itwin/frontend-tiles": "4.0.7",
     "@itwin/hypermodeling-frontend": "4.0.7",
-    "@itwin/imodels-access-frontend": "^4.0.0",
-    "@itwin/imodels-client-management": "^4.0.0",
     "@itwin/map-layers-formats": "4.0.7",
     "@itwin/object-storage-core": "^2.0.0",
     "@itwin/reality-data-client": "^1.0.0",
