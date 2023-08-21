@@ -87,9 +87,7 @@ export const getConfig = (): DtaConfiguration => {
     return configuration;
 
   configuration = {};
-  if (ProcessDetector.isMobileAppBackend)
-    return configuration;
-
+  
   // Currently TypeStation ONLY supports opening files from local disk - i.e., "standalone" mode.
   // At some point we will reinstate ability to open from hub.
   configuration.standalone = true;

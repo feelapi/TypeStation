@@ -31,11 +31,6 @@ function loadEnv(envFile: string) {
 class TypeStationRpc extends DtaRpcInterface {
 
   public override async readExternalSavedViews(bimFileName: string): Promise<string> {
-    if (ProcessDetector.isMobileAppBackend && process.env.DOCS) {
-      const docPath = process.env.DOCS;
-      bimFileName = path.join(docPath, bimFileName);
-    }
-
     const esvFileName = this.createEsvFilename(bimFileName);
     if (!fs.existsSync(esvFileName))
       return "";
@@ -45,22 +40,11 @@ class TypeStationRpc extends DtaRpcInterface {
   }
 
   public override async writeExternalSavedViews(bimFileName: string, namedViews: string): Promise<void> {
-    if (ProcessDetector.isMobileAppBackend && process.env.DOCS) {
-      // Used to set a writeable directory on an iOS or Android device.
-      const docPath = process.env.DOCS;
-      bimFileName = path.join(docPath, bimFileName);
-    }
-
     const esvFileName = this.createEsvFilename(bimFileName);
     return this.writeExternalFile(esvFileName, namedViews);
   }
 
   public override async readExternalCameraPaths(bimFileName: string): Promise<string> {
-    if (ProcessDetector.isMobileAppBackend && process.env.DOCS) {
-      const docPath = process.env.DOCS;
-      bimFileName = path.join(docPath, bimFileName);
-    }
-
     const cameraPathsFileName = this.createCameraPathsFilename(bimFileName);
     if (!fs.existsSync(cameraPathsFileName))
       return "";
@@ -70,22 +54,11 @@ class TypeStationRpc extends DtaRpcInterface {
   }
 
   public override async writeExternalCameraPaths(bimFileName: string, cameraPaths: string): Promise<void> {
-    if (ProcessDetector.isMobileAppBackend && process.env.DOCS) {
-      // Used to set a writeable directory on an iOS or Android device.
-      const docPath = process.env.DOCS;
-      bimFileName = path.join(docPath, bimFileName);
-    }
-
     const cameraPathsFileName = this.createCameraPathsFilename(bimFileName);
     return this.writeExternalFile(cameraPathsFileName, cameraPaths);
   }
 
   public override async readExternalFile(txtFileName: string): Promise<string> {
-    if (ProcessDetector.isMobileAppBackend && process.env.DOCS) {
-      const docPath = process.env.DOCS;
-      txtFileName = path.join(docPath, txtFileName);
-    }
-
     const dataFileName = this.createTxtFilename(txtFileName);
     if (!fs.existsSync(dataFileName))
       return "";

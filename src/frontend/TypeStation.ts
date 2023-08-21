@@ -13,7 +13,6 @@ import { WebGLExtensionName } from "@itwin/webgl-compatibility";
 import { DtaBooleanConfiguration, DtaConfiguration, DtaNumberConfiguration, DtaStringConfiguration, getConfig } from "../common/DtaConfiguration";
 import { DtaRpcInterface } from "../common/DtaRpcInterface";
 import { TypeStation } from "./App";
-import { MobileMessenger } from "./FileOpen";
 import { openIModel, OpenIModelProps } from "./openIModel";
 import { Surface } from "./Surface";
 import { setTitle } from "./Title";
@@ -50,14 +49,7 @@ export function getConfigurationNumber(key: keyof DtaNumberConfiguration) {
 }
 
 const getFrontendConfig = async (useRPC = false) => {
-  if (ProcessDetector.isMobileAppFrontend) {
-    if (window) {
-      const urlParams = new URLSearchParams(window.location.hash);
-      urlParams.forEach((val, key) => {
-        (configuration as any)[key] = val;
-      });
-    }
-  } else {
+  {
     const config: DtaConfiguration = useRPC ? await DtaRpcInterface.getClient().getEnvConfig() : getConfig();
     Object.assign(configuration, config);
   }
@@ -181,7 +173,7 @@ const dtaFrontendMain = async () => {
   // We can call RPC at this point (after startup), so if not mobile, call RPC and get true env from backend,
   // then shutdown frontend, init vars again based on possibly changed configuration, then startup again
   // (All that to workaround the fact that we can't call RPC before we start to get the true env first.)
-  if (!ProcessDetector.isMobileAppFrontend) {
+  {
     Object.assign(configuration, await getFrontendConfig(true));
     // console.log("New Front End Configuration from backend:", JSON.stringify(configuration)); // eslint-disable-line no-console
     await IModelApp.shutdown();
@@ -224,10 +216,7 @@ const dtaFrontendMain = async () => {
     if (undefined !== iModelName) {
       const writable = configuration.openReadWrite ?? false;
       iModel = await openFile({ fileName: iModelName, writable });
-      if (ProcessDetector.isMobileAppFrontend) {
-        // attempt to send message to mobile that the model was opened
-        MobileMessenger.postMessage("modelOpened", iModelName);
-      }
+
       setTitle(iModel);
     } else {
       const origStandalone = configuration.standalone;
