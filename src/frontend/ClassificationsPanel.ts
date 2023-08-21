@@ -12,7 +12,7 @@ import {
 import {
   ContextRealityModelState, DisplayStyle3dState, IModelApp, SpatialModelState, SpatialViewState, Viewport,
 } from "@itwin/core-frontend";
-import { DisplayTestApp } from "./App";
+import { TypeStation } from "./App";
 import { ToolBarDropDown } from "./ToolBar";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions, RealityDataQueryCriteria, RealityDataResponse } from "@itwin/reality-data-client";
 
@@ -47,7 +47,7 @@ export class ClassificationsPanel extends ToolBarDropDown {
   // for IMJS_ITWIN_ID to work it should be define in your environment and you should be in signin mode with correct BUDDI region set
   //  IMJS_STANDALONE_SIGNIN=true
   //  IMJS_ITWIN_ID="fb1696c8-c074-4c76-a539-a5546e048cc6"
-  private _iTwinId: GuidString | undefined = DisplayTestApp.iTwinId;
+  private _iTwinId: GuidString | undefined = TypeStation.iTwinId;
 
   private get _selectedClassifier(): SpatialClassifier | undefined {
     if (undefined === this._selectedSpatialClassifiers)

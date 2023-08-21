@@ -6,7 +6,7 @@ import { KeyinField, parseArgs } from "@itwin/frontend-devtools";
 import { Range3d } from "@itwin/core-geometry";
 import { Cartographic } from "@itwin/core-common";
 import { BlankConnection, BlankConnectionProps, IModelApp, Tool } from "@itwin/core-frontend";
-import { DisplayTestApp } from "./App";
+import { TypeStation } from "./App";
 import { BrowserFileSelector, selectFileName } from "./FileOpen";
 import { FpsMonitor } from "./FpsMonitor";
 import { NotificationsWindow } from "./Notifications";
@@ -33,7 +33,7 @@ export class Surface {
   public readonly browserFileSelector?: BrowserFileSelector;
   public readonly openReadWrite: boolean;
 
-  public static get instance() { return DisplayTestApp.surface; }
+  public static get instance() { return TypeStation.surface; }
 
   public constructor(surfaceDiv: HTMLElement, toolbarDiv: HTMLElement, browserFileSelector: BrowserFileSelector | undefined, openReadWrite: boolean) {
     // Ensure iModel gets closed on page close/reload
@@ -434,7 +434,7 @@ export class CreateWindowTool extends Tool {
   public static override get maxArgs() { return undefined; }
 
   public override async run(props: NamedWindowProps): Promise<boolean> {
-    DisplayTestApp.surface.createNamedWindow(props);
+    TypeStation.surface.createNamedWindow(props);
     return true;
   }
 
@@ -593,7 +593,7 @@ export class CloneViewportTool extends Tool {
       viewportId = selectedView.viewportId;
     }
 
-    const surface = DisplayTestApp.surface;
+    const surface = TypeStation.surface;
     const viewer = surface.findViewerByViewportId(viewportId);
     if (undefined !== viewer)
       surface.addViewer(viewer.clone());

@@ -5,7 +5,7 @@
 import { BentleyError, GuidString, IModelStatus, ProcessDetector } from "@itwin/core-bentley";
 import { BriefcaseDownloader, IModelError, LocalBriefcaseProps, SyncMode } from "@itwin/core-common";
 import { BriefcaseConnection, DownloadBriefcaseOptions, IModelConnection, NativeApp, SnapshotConnection } from "@itwin/core-frontend";
-import { getConfigurationBoolean } from "./DisplayTestApp";
+import { getConfigurationBoolean } from "./TypeStation";
 
 export interface OpenFileIModelProps {
   fileName: string;

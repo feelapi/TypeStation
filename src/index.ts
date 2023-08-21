@@ -5,4 +5,4 @@
 
 // index.html at the root of this project requires an index.ts file in this location. Launch the app frontend
 
-import "./frontend/DisplayTestApp";
+import "./frontend/TypeStation";

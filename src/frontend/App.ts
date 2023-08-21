@@ -55,7 +55,7 @@ import { MapLayersFormats } from "@itwin/map-layers-formats";
 import { OpenRealityModelSettingsTool } from "./RealityModelDisplaySettingsWidget";
 import { ITwinLocalization } from "@itwin/core-i18n";
 
-class DisplayTestAppAccuSnap extends AccuSnap {
+class TypeStationAccuSnap extends AccuSnap {
   private readonly _activeSnaps: SnapMode[] = [SnapMode.NearestKeypoint];
 
   public override get keypointDivisor() { return 2; }
@@ -67,7 +67,7 @@ class DisplayTestAppAccuSnap extends AccuSnap {
   }
 }
 
-class DisplayTestAppToolAdmin extends ToolAdmin {
+class TypeStationToolAdmin extends ToolAdmin {
   /** Process shortcut key events */
   public override async processShortcutKey(keyEvent: KeyboardEvent, wentDown: boolean): Promise<boolean> {
     if (wentDown && AccuDrawHintBuilder.isEnabled)
@@ -184,7 +184,7 @@ class ShutDownTool extends Tool {
   public static override toolId = "ShutDown";
 
   public override async run(_args: any[]): Promise<boolean> {
-    DisplayTestApp.surface.closeAllViewers();
+    TypeStation.surface.closeAllViewers();
     const app = ElectronApp.isValid ? ElectronApp : IModelApp;
     await app.shutdown();
 
@@ -197,14 +197,14 @@ class ExitTool extends Tool {
   public static override toolId = "Exit";
 
   public override async run(_args: any[]): Promise<boolean> {
-    DisplayTestApp.surface.closeAllViewers();
+    TypeStation.surface.closeAllViewers();
     await DtaRpcInterface.getClient().terminate();
     return true;
   }
 }
 
 
-export class DisplayTestApp {
+export class TypeStation {
   private static _surface?: Surface;
   public static get surface() { return this._surface!; }
   public static set surface(surface: Surface) { this._surface = surface; }
@@ -222,10 +222,10 @@ export class DisplayTestApp {
     };
     const opts: ElectronAppOpts | LocalHostIpcAppOpts = {
       iModelApp: {
-        accuSnap: new DisplayTestAppAccuSnap(),
+        accuSnap: new TypeStationAccuSnap(),
         notifications: new Notifications(),
         tileAdmin,
-        toolAdmin: new DisplayTestAppToolAdmin(),
+        toolAdmin: new TypeStationToolAdmin(),
         uiAdmin: new UiManager(),
         renderSys,
         rpcInterfaces: [
@@ -331,7 +331,7 @@ export class DisplayTestApp {
   }
 
   public static setActiveSnapModes(snaps: SnapMode[]): void {
-    (IModelApp.accuSnap as DisplayTestAppAccuSnap).setActiveSnapModes(snaps);
+    (IModelApp.accuSnap as TypeStationAccuSnap).setActiveSnapModes(snaps);
   }
 
   public static setActiveSnapMode(snap: SnapMode): void { this.setActiveSnapModes([snap]); }

@@ -12,7 +12,7 @@ import { initializeFrontendTiles } from "@itwin/frontend-tiles";
 import { WebGLExtensionName } from "@itwin/webgl-compatibility";
 import { DtaBooleanConfiguration, DtaConfiguration, DtaNumberConfiguration, DtaStringConfiguration, getConfig } from "../common/DtaConfiguration";
 import { DtaRpcInterface } from "../common/DtaRpcInterface";
-import { DisplayTestApp } from "./App";
+import { TypeStation } from "./App";
 import { MobileMessenger } from "./FileOpen";
 import { openIModel, OpenIModelProps } from "./openIModel";
 import { Surface } from "./Surface";
@@ -169,7 +169,7 @@ const dtaFrontendMain = async () => {
   let tileAdminProps: TileAdmin.Props;
   let renderSystemOptions: RenderSystem.Options;
   [renderSystemOptions, tileAdminProps] = setConfigurationResults();
-  await DisplayTestApp.startup(configuration, renderSystemOptions, tileAdminProps);
+  await TypeStation.startup(configuration, renderSystemOptions, tileAdminProps);
   if (false !== configuration.enableDiagnostics)
     IModelApp.renderSystem.enableDiagnostics(RenderDiagnostics.All);
 
@@ -186,7 +186,7 @@ const dtaFrontendMain = async () => {
     // console.log("New Front End Configuration from backend:", JSON.stringify(configuration)); // eslint-disable-line no-console
     await IModelApp.shutdown();
     [renderSystemOptions, tileAdminProps] = setConfigurationResults();
-    await DisplayTestApp.startup(configuration, renderSystemOptions, tileAdminProps);
+    await TypeStation.startup(configuration, renderSystemOptions, tileAdminProps);
     if (false !== configuration.enableDiagnostics)
       IModelApp.renderSystem.enableDiagnostics(RenderDiagnostics.All);
 
@@ -196,7 +196,7 @@ const dtaFrontendMain = async () => {
     }
   }
 
-  // this needs to execute after all DisplayTestApp.startup executions so that env var will be current
+  // this needs to execute after all TypeStation.startup executions so that env var will be current
   if (configuration.frontendTilesUrlTemplate) {
     initializeFrontendTiles({
       computeSpatialTilesetBaseUrl: async (iModel) => {
@@ -286,14 +286,14 @@ async function initView(iModel: IModelConnection | undefined) {
     input: document.getElementById("browserFileSelector") as HTMLInputElement,
   } : undefined;
 
-  DisplayTestApp.surface = new Surface(document.getElementById("app-surface")!, document.getElementById("toolBar")!, fileSelector, configuration.openReadWrite ?? false);
+  TypeStation.surface = new Surface(document.getElementById("app-surface")!, document.getElementById("toolBar")!, fileSelector, configuration.openReadWrite ?? false);
 
   // We need layout to complete so that the div we want to stick our viewport into has non-zero dimensions.
   // Consistently reproducible for some folks, not others...
   await documentLoaded();
 
   if (undefined !== iModel) {
-    const viewer = await DisplayTestApp.surface.createViewer({
+    const viewer = await TypeStation.surface.createViewer({
       iModel,
       defaultViewName: configuration.viewName,
       disableEdges: true === configuration.disableEdges,

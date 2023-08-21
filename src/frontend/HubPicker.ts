@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import { ProcessDetector } from "@itwin/core-bentley";
 import { createButton, createTextBox, TextBoxProps } from "@itwin/frontend-devtools";
-import { getConfigurationString } from "./DisplayTestApp";
+import { getConfigurationString } from "./TypeStation";
 import { ToolBarDropDown } from "./ToolBar";
 
 export class HubPicker extends ToolBarDropDown {

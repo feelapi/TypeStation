@@ -7,7 +7,7 @@ import { QueryRowFormat } from "@itwin/core-common";
 import {
   FeatureSymbology, IModelConnection, SceneContext, SnapshotConnection, SpatialModelState, TiledGraphicsProvider, TileTreeReference, Viewport,
 } from "@itwin/core-frontend";
-import { DisplayTestApp } from "./App";
+import { TypeStation } from "./App";
 
 /** A reference to a TileTree originating from a different IModelConnection than the one the user opened. */
 class ExternalTreeRef extends TileTreeReference {
@@ -110,7 +110,7 @@ export async function toggleExternalTiledGraphicsProvider(vp: Viewport): Promise
     return;
   }
 
-  const filename = await DisplayTestApp.surface.selectFileName();
+  const filename = await TypeStation.surface.selectFileName();
   if (undefined === filename)
     return;
 

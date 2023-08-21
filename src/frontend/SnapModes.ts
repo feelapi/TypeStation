@@ -5,7 +5,7 @@
 
 import { createComboBox } from "@itwin/frontend-devtools";
 import { SnapMode } from "@itwin/core-frontend";
-import { DisplayTestApp } from "./App";
+import { TypeStation } from "./App";
 
 const multiSnapModes = [
   SnapMode.NearestKeypoint,
@@ -21,9 +21,9 @@ const multiSnapMode = -1;
 
 function changeSnapModes(value: SnapMode): void {
   if (multiSnapMode !== (value as number)) {
-    DisplayTestApp.setActiveSnapMode(value);
+    TypeStation.setActiveSnapMode(value);
   } else {
-    DisplayTestApp.setActiveSnapModes(multiSnapModes);
+    TypeStation.setActiveSnapModes(multiSnapModes);
   }
 }
 

@@ -28,7 +28,7 @@ function loadEnv(envFile: string) {
   dotenvExpand(envResult);
 }
 
-class DisplayTestAppRpc extends DtaRpcInterface {
+class TypeStationRpc extends DtaRpcInterface {
 
   public override async readExternalSavedViews(bimFileName: string): Promise<string> {
     if (ProcessDetector.isMobileAppBackend && process.env.DOCS) {
@@ -219,7 +219,7 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions) => {
   };
 
   /** register the implementation of our RPCs. */
-  RpcManager.registerImpl(DtaRpcInterface, DisplayTestAppRpc);
+  RpcManager.registerImpl(DtaRpcInterface, TypeStationRpc);
   if (ProcessDetector.isElectronAppBackend) {
     await ElectronHost.startup(opts);
     EditCommandAdmin.registerModule(editorBuiltInCommands);
