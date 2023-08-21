@@ -142,67 +142,6 @@ export class ClassificationsPanel extends ToolBarDropDown {
     return false;
   }
 
-  private async populateRealityModelsPicker(): Promise<void> {
-    this._realityModelPickerMenu.div.style.display = "none";
-    clearElement(this._realityModelPickerMenu.body);
-
-    const view = this._vp.view;
-    const ecef = this._vp.iModel.ecefLocation;
-    if (!view.isSpatialView() || undefined === ecef) {
-      return;
-    }
-
-    const range = new CartographicRange(this._vp.iModel.projectExtents, ecef.getTransform());
-    let available: RealityDataResponse = {realityDatas: []};
-    try {
-      if (this._iTwinId !== undefined && IModelApp.authorizationClient) {
-        const accessToken = await IModelApp.authorizationClient.getAccessToken();
-        if (accessToken) {
-          const criteria: RealityDataQueryCriteria = {
-            extent: range,
-          };
-          const realityDataClientOptions: RealityDataClientOptions = {
-            /** API Version. v1 by default */
-            // version?: ApiVersion;
-            /** API Url. Used to select environment. Defaults to "https://api.bentley.com/realitydata" */
-            baseUrl: `https://${process.env.IMJS_URL_PREFIX}api.bentley.com/realitydata`,
-          };
-          available = await new RealityDataAccessClient(realityDataClientOptions).getRealityDatas(accessToken, this._iTwinId, criteria);
-        }
-      }
-    } catch (_error) {
-      // eslint-disable-next-line no-console
-      console.error("Error in query RealitydataList, you need to set IMJS_STANDALONE_SIGNIN=true, and is your IMJS_ITWIN_ID correctly set?");
-    }
-
-    for (const rdEntry of available.realityDatas) {
-      const name = undefined !== rdEntry.displayName ? rdEntry.displayName : rdEntry.id;
-      const rdSourceKey = this.createRealityDataSourceKeyFromITwinRealityData(rdEntry);
-      const tilesetUrl = await IModelApp.realityDataAccess?.getRealityDataUrl(this._iTwinId,rdSourceKey.id);
-      const isDisplaySupported = this.isSupportedDisplayType(rdEntry.type);
-      if (tilesetUrl && isDisplaySupported) {
-        const entry: ContextRealityModelProps = {
-          rdSourceKey,
-          tilesetUrl,
-          name,
-          description: rdEntry?.description,
-          realityDataId: rdSourceKey.id,
-        };
-
-        createCheckBox({
-          name,
-          id: RealityDataSourceKey.convertToString(rdSourceKey),
-          parent: this._realityModelPickerMenu.body,
-          isChecked: this.hasAttachedRealityModelFromKey(view.displayStyle, rdSourceKey),
-          handler: (checkbox) => this.toggle(entry, checkbox.checked),
-        });
-      }
-    }
-    IModelApp.makeHTMLElement("hr", { parent: this._realityModelPickerMenu.body });
-    if (available.realityDatas.length > 0)
-      this._realityModelPickerMenu.div.style.display = "block";
-  }
-
   private populateRealityModelList(): void {
     // assemble list of Spatial Classifiers for context reality models (should usually be at most one)
     const realityModels: Array<{ spatialClassifiers: SpatialClassifiers, modelName: string }> = [];
@@ -284,7 +223,6 @@ export class ClassificationsPanel extends ToolBarDropDown {
 
     this._realityModelPickerMenu.div.style.display = "none";
     this.populateRealityModelList();
-    await this.populateRealityModelsPicker();
     await this.populateModelList();
   }
 

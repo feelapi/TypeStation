@@ -15,7 +15,6 @@ import { DtaRpcInterface } from "../common/DtaRpcInterface";
 import { DisplayTestApp } from "./App";
 import { MobileMessenger } from "./FileOpen";
 import { openIModel, OpenIModelProps } from "./openIModel";
-import { signIn } from "./signIn";
 import { Surface } from "./Surface";
 import { setTitle } from "./Title";
 import { showStatus } from "./Utils";
@@ -220,12 +219,6 @@ const dtaFrontendMain = async () => {
   const uiReady = displayUi(); // Get the browser started loading our html page and the svgs that it references but DON'T WAIT
 
   try {
-    if (!configuration.standalone || configuration.signInForStandalone) {
-      while (!await signIn()) {
-        alert("please sign in");
-      }
-    }
-
     let iModel: IModelConnection | undefined;
     const iModelName = configuration.iModelName;
     if (undefined !== iModelName) {

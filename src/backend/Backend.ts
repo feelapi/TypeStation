@@ -5,10 +5,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { Logger, LogLevel, ProcessDetector } from "@itwin/core-bentley";
-import { ElectronMainAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronMain";
 import { ElectronHost, ElectronHostOptions } from "@itwin/core-electron/lib/cjs/ElectronBackend";
-import { BackendIModelsAccess } from "@itwin/imodels-access-backend";
-import { IModelsClient } from "@itwin/imodels-client-authoring";
 import { IModelHost, IModelHostOptions, LocalhostIpcHost } from "@itwin/core-backend";
 import { IModelReadRpcInterface, IModelTileRpcInterface, RpcInterfaceDefinition, RpcManager, SnapshotIModelRpcInterface } from "@itwin/core-common";
 import { DtaConfiguration, getConfig } from "../common/DtaConfiguration";
@@ -171,10 +168,6 @@ class DisplayTestAppRpc extends DtaRpcInterface {
     if (DtaRpcInterface.backendServer)
       DtaRpcInterface.backendServer.close();
   }
-
-  public override async getAccessToken(): Promise<string> {
-    return (await IModelHost.authorizationClient?.getAccessToken()) ?? "";
-  }
 }
 
 export const getRpcInterfaces = (): RpcInterfaceDefinition[] => {
@@ -207,15 +200,11 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions) => {
   Logger.setLevelDefault(logLevel);
   Logger.setLevel("SVT", LogLevel.Trace);
 
-  const iModelClient = new IModelsClient({ api: { baseUrl: `https://${process.env.IMJS_URL_PREFIX ?? ""}api.bentley.com/imodels` } });
-  const hubAccess = new BackendIModelsAccess(iModelClient);
-
   const iModelHost: IModelHostOptions = {
     logTileLoadTimeThreshold: 3,
     logTileSizeThreshold: 500000,
     cacheDir: process.env.IMJS_BRIEFCASE_CACHE_LOCATION,
-    profileName: "display-test-app",
-    hubAccess,
+    profileName: "display-test-app"
   };
 
   const opts = {
@@ -231,38 +220,14 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions) => {
 
   /** register the implementation of our RPCs. */
   RpcManager.registerImpl(DtaRpcInterface, DisplayTestAppRpc);
-  const authClient = await initializeAuthorizationClient();
   if (ProcessDetector.isElectronAppBackend) {
-    opts.iModelHost.authorizationClient = authClient;
     await ElectronHost.startup(opts);
-    await authClient?.signInSilent();
     EditCommandAdmin.registerModule(editorBuiltInCommands);
   } else {
     await LocalhostIpcHost.startup(opts);
     EditCommandAdmin.registerModule(editorBuiltInCommands);
   }
 };
-
-async function initializeAuthorizationClient(): Promise<ElectronMainAuthorization | undefined> {
-  if (
-    ProcessDetector.isElectronAppBackend &&
-    checkEnvVars(
-      "IMJS_OIDC_ELECTRON_TEST_CLIENT_ID",
-      "IMJS_OIDC_ELECTRON_TEST_SCOPES",
-    )
-  ) {
-    return new ElectronMainAuthorization({
-      clientId: process.env.IMJS_OIDC_ELECTRON_TEST_CLIENT_ID!,
-      scopes: process.env.IMJS_OIDC_ELECTRON_TEST_SCOPES!,
-      redirectUris:
-        process.env.IMJS_OIDC_ELECTRON_TEST_REDIRECT_URI !== undefined ?
-          [process.env.IMJS_OIDC_ELECTRON_TEST_REDIRECT_URI] : ["http://localhost:3000/signin-callback"],
-      issuerUrl: `https://${process.env.IMJS_URL_PREFIX ?? ""}ims.bentley.com`,
-    });
-  }
-  // Note: Mobile's default auth client works, and will be used if we get here on mobile.
-  return undefined;
-}
 
 /**
  * Logs a warning if only some are provided

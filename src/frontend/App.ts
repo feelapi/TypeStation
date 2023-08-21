@@ -11,7 +11,7 @@ import { IModelsClient } from "@itwin/imodels-client-management";
 import { FrontendDevTools } from "@itwin/frontend-devtools";
 import { HyperModeling } from "@itwin/hypermodeling-frontend";
 import {
-  BentleyCloudRpcManager, BentleyCloudRpcParams, IModelReadRpcInterface, IModelTileRpcInterface, SnapshotIModelRpcInterface,
+  IModelReadRpcInterface, IModelTileRpcInterface, SnapshotIModelRpcInterface,
 } from "@itwin/core-common";
 import { EditTools } from "@itwin/editor-frontend";
 import {
@@ -40,7 +40,6 @@ import { OutputShadersTool } from "./OutputShadersTool";
 import { PathDecorationTestTool } from "./PathDecorationTest";
 import { GltfDecorationTool } from "./GltfDecoration";
 import { ToggleShadowMapTilesTool } from "./ShadowMapDecoration";
-import { signIn, signOut } from "./signIn";
 import {
   CloneViewportTool, CloseIModelTool, CloseWindowTool, CreateWindowTool, DockWindowTool, FocusWindowTool, MaximizeWindowTool, OpenIModelTool,
   ReopenIModelTool, ResizeWindowTool, RestoreWindowTool, Surface,
@@ -57,9 +56,7 @@ import { BingTerrainMeshProvider } from "./BingTerrainProvider";
 import { AttachCustomRealityDataTool, registerRealityDataSourceProvider } from "./RealityDataProvider";
 import { MapLayersFormats } from "@itwin/map-layers-formats";
 import { OpenRealityModelSettingsTool } from "./RealityModelDisplaySettingsWidget";
-import { ElectronRendererAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronRenderer";
 import { ITwinLocalization } from "@itwin/core-i18n";
-import { getConfigurationString } from "./DisplayTestApp";
 
 class DisplayTestAppAccuSnap extends AccuSnap {
   private readonly _activeSnaps: SnapMode[] = [SnapMode.NearestKeypoint];
@@ -268,31 +265,7 @@ export class DisplayTestApp {
     this._iTwinId = configuration.iTwinId;
 
     if (ProcessDetector.isElectronAppFrontend) {
-      // The electron package produces an exception every time getAccessToken is called, which is quite frequently.
-      // It makes debugging with "pause on caught exceptions" infuriating.
-      // ###TODO fix that in the client and remove this
-      if (!configuration.noElectronAuth)
-        opts.iModelApp!.authorizationClient = new ElectronRendererAuthorization({
-          clientId: getConfigurationString("oidcClientId") ?? "imodeljs-spa-test",
-        });
-
       await ElectronApp.startup(opts);
-    } else {
-      const redirectUri = "http://localhost:3000/signin-callback";
-      const urlObj = new URL(redirectUri);
-      if (urlObj.pathname === window.location.pathname) {
-        const client = new BrowserAuthorizationClient({
-          clientId: getConfigurationString("oidcClientId") ?? "imodeljs-spa-test",
-          scope: getConfigurationString("oidcScope") ?? "projects:read realitydata:read imodels:read imodels:modify imodelaccess:read",
-          redirectUri,
-        });
-        await client.handleSigninCallback();
-      }
-
-      const rpcParams: BentleyCloudRpcParams = { info: { title: "ui-test-app", version: "v1.0" }, uriPrefix: configuration.customOrchestratorUri || "http://localhost:3001" };
-      if (opts.iModelApp?.rpcInterfaces) // eslint-disable-line deprecation/deprecation
-        BentleyCloudRpcManager.initializeClient(rpcParams, opts.iModelApp.rpcInterfaces); // eslint-disable-line deprecation/deprecation
-      await LocalhostIpcApp.startup(opts);
     }
 
     IModelApp.applicationLogoCard =
