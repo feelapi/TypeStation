@@ -15,7 +15,7 @@ export interface ToolButtonProps {
 
 const createTestAppIcon = (iconUnicode: string) => {
   const icon = IModelApp.makeHTMLElement("span", { innerText: iconUnicode });
-  icon.style.fontFamily = "Display-Test-App-Icons";
+  icon.style.fontFamily = "TypeStation-Icons";
   icon.style.fontSize = "35px";
   return icon;
 };
