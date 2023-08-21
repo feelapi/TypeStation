@@ -11,5 +11,5 @@ export function setTitle(imodel: IModelConnection) {
   if (OpenMode.ReadWrite === imodel.openMode && imodel.isBriefcaseConnection())
     prefix = imodel.editingScope ? "[ EDIT ] " : "[ R/W ] ";
 
-  document.title = `${prefix}${imodel.key} - Display Test App`;
+  document.title = `${prefix}${imodel.key} - TypeStation`;
 }

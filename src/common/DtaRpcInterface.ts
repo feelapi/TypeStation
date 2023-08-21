@@ -7,7 +7,7 @@ import * as http from "http";
 import * as https from "https";
 import { DtaConfiguration } from "./DtaConfiguration";
 
-/** Display Test App RPC interface. */
+/** TypeStation RPC interface. */
 export class DtaRpcInterface extends RpcInterface { // eslint-disable-line deprecation/deprecation
   /** The immutable name of the interface. */
   public static readonly interfaceName = "SVTRpcInterface";

@@ -63,7 +63,7 @@ const dtaElectronMain = async () => {
   const maximizeWindow = undefined === sizeAndPosition || ElectronHost.getWindowMaximizedSetting(mainWindowName);
 
   // after backend is initialized, start TypeStation frontend process and open the window
-  await ElectronHost.openMainWindow({ ...sizeAndPosition, show: !maximizeWindow, title: "Display Test App", storeWindowName: mainWindowName });
+  await ElectronHost.openMainWindow({ ...sizeAndPosition, show: !maximizeWindow, title: "TypeStation", storeWindowName: mainWindowName });
   assert(ElectronHost.mainWindow !== undefined);
 
   if (maximizeWindow) {

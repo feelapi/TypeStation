@@ -269,7 +269,7 @@ export class DisplayTestApp {
     }
 
     IModelApp.applicationLogoCard =
-      () => IModelApp.makeLogoCard({ iconSrc: "DTA.png", iconWidth: 100, heading: "Display Test App", notice: "For internal testing" });
+      () => IModelApp.makeLogoCard({ iconSrc: "DTA.png", iconWidth: 100, heading: "TypeStation", notice: "A CAD Software" });
 
     const svtToolNamespace = "SVTTools";
     await IModelApp.localization.registerNamespace(svtToolNamespace);
