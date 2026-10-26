@@ -38,7 +38,7 @@ export class MacroTool extends Tool {
               break;
           }
         } catch (ex) {
-          message = `Key-in ${cmd} produced exception: ${ex}`;
+          message = `Key-in ${cmd} produced exception: ${String(ex)}`;
         }
         if (undefined !== message)
           await IModelApp.notifications.openMessageBox(MessageBoxType.MediumAlert, message, MessageBoxIconType.Warning);

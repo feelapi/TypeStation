@@ -6,7 +6,7 @@
 import { assert, compareStringsOrUndefined, GuidString } from "@itwin/core-bentley";
 import { ComboBox, ComboBoxEntry, createCheckBox, createComboBox, createNestedMenu, createNumericInput, NestedMenu } from "@itwin/frontend-devtools";
 import {
-  CartographicRange, ContextRealityModelProps, ModelProps, RealityDataFormat, RealityDataProvider, RealityDataSourceKey, SpatialClassifier, SpatialClassifierFlagsProps, SpatialClassifierInsideDisplay,
+  ContextRealityModelProps, ModelProps, RealityDataFormat, RealityDataProvider, RealityDataSourceKey, SpatialClassifier, SpatialClassifierFlagsProps, SpatialClassifierInsideDisplay,
   SpatialClassifierOutsideDisplay, SpatialClassifiers,
 } from "@itwin/core-common";
 import {
@@ -14,7 +14,7 @@ import {
 } from "@itwin/core-frontend";
 import { TypeStation } from "./App";
 import { ToolBarDropDown } from "./ToolBar";
-import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions, RealityDataQueryCriteria, RealityDataResponse } from "@itwin/reality-data-client";
+import { ITwinRealityData } from "@itwin/reality-data-client";
 
 function clearElement(element: HTMLElement): void {
   while (element.hasChildNodes())
@@ -158,7 +158,7 @@ export class ClassificationsPanel extends ToolBarDropDown {
 
     // create list of entries for Classifier in the spatial Classifiers
     const entries = realityModels.map((spatialClassifier, i) => {
-      return ({ name: spatialClassifier.modelName, value: i } as ComboBoxEntry);
+      return { name: spatialClassifier.modelName, value: i };
     });
 
     clearElement(this._realityModelListDiv);
@@ -310,7 +310,7 @@ export class ClassificationsPanel extends ToolBarDropDown {
       parent,
       entries: insideEntries,
       handler: (select) => {
-        const newValue = Number.parseInt(select.value, 10) as SpatialClassifierInsideDisplay;
+        const newValue = Number.parseInt(select.value, 10);
         updateFlags({ inside: newValue });
         this._vp.invalidateScene();
       },
@@ -323,7 +323,7 @@ export class ClassificationsPanel extends ToolBarDropDown {
       parent,
       entries: outsideEntries,
       handler: (select) => {
-        const newValue = Number.parseInt(select.value, 10) as SpatialClassifierOutsideDisplay;
+        const newValue = Number.parseInt(select.value, 10);
         updateFlags({ outside: newValue });
         this._vp.invalidateScene();
       },

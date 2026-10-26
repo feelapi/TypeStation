@@ -37,7 +37,7 @@ export class DebugWindow extends Window {
   }
 
   public dispose(): void {
-    this._panel.dispose();
+    this._panel[Symbol.dispose]();
     this.hide();
     this._dispose();
   }

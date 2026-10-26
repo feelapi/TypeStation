@@ -18,8 +18,8 @@ function loadEnv(envFile: string) {
   if (!fs.existsSync(envFile))
     return;
 
-  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
+  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-require-imports
+  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-require-imports
   const envResult = dotenv.config({ path: envFile });
   if (envResult.error) {
     throw envResult.error;
@@ -130,7 +130,7 @@ class TypeStationRpc extends DtaRpcInterface {
 
     // Electron only
     try {
-      const { app } = require("electron"); // eslint-disable-line @typescript-eslint/no-var-requires
+      const { app } = require("electron"); // eslint-disable-line @typescript-eslint/no-require-imports
       if (app !== undefined)
         app.exit();
     } catch {
@@ -148,7 +148,7 @@ export const getRpcInterfaces = (): RpcInterfaceDefinition[] => {
     DtaRpcInterface,
     IModelReadRpcInterface,
     IModelTileRpcInterface,
-    SnapshotIModelRpcInterface,
+    SnapshotIModelRpcInterface, // eslint-disable-line @typescript-eslint/no-deprecated -- this app implements its own Electron RPC transport
   ];
 
   return rpcs;
@@ -206,7 +206,7 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions) => {
  * Logs a warning if only some are provided
  * @returns true if all are provided, false if any missing.
  */
-function checkEnvVars(...keys: Array<string>): boolean {
+function _checkEnvVars(...keys: Array<string>): boolean {
   const missing = keys.filter((name) => process.env[name] === undefined);
   if (missing.length === 0) {
     return true;

@@ -189,7 +189,7 @@ export class PlaceLineStringTool extends CreateElementTool {
 
         const elemProps: PhysicalElementProps = { classFullName: "Generic:PhysicalObject", model, category, code: Code.createEmpty(), placement: { origin, angles }, geom: builder.geometryStream };
         await basicManipulationIpc.insertGeometricElement(elemProps);
-        await this.saveChanges();
+        await this.saveChanges(); // eslint-disable-line @typescript-eslint/no-deprecated -- supported until at least 2027-05-04
       } else {
         const builder = new ElementGeometry.Builder();
         const primitive = LineString3d.create(this._points);
@@ -205,8 +205,8 @@ export class PlaceLineStringTool extends CreateElementTool {
           if (!partBuilder.appendGeometryQuery(sphere))
             return;
 
-          const partProps: GeometryPartProps = { classFullName: "BisCore:GeometryPart", model: IModel.dictionaryId, code: Code.createEmpty() };
-          const partId = await basicManipulationIpc.insertGeometryPart(partProps, { entryArray: partBuilder.entries });
+          const partProps: GeometryPartProps = { classFullName: "BisCore:GeometryPart", model: IModel.dictionaryId, code: Code.createEmpty(), elementGeometryBuilderParams: { entryArray: partBuilder.entries } };
+          const partId = await basicManipulationIpc.insertGeometryPart(partProps);
 
           for (const pt of this._points) {
             if (!builder.appendGeometryPart3d(partId, pt))
@@ -214,9 +214,9 @@ export class PlaceLineStringTool extends CreateElementTool {
           }
         }
 
-        const elemProps: PhysicalElementProps = { classFullName: "Generic:PhysicalObject", model, category, code: Code.createEmpty(), placement: { origin, angles } };
-        await basicManipulationIpc.insertGeometricElement(elemProps, { entryArray: builder.entries });
-        await this.saveChanges();
+        const elemProps: PhysicalElementProps = { classFullName: "Generic:PhysicalObject", model, category, code: Code.createEmpty(), placement: { origin, angles }, elementGeometryBuilderParams: { entryArray: builder.entries } };
+        await basicManipulationIpc.insertGeometricElement(elemProps);
+        await this.saveChanges(); // eslint-disable-line @typescript-eslint/no-deprecated -- supported until at least 2027-05-04
       }
     } catch (err: any) {
       IModelApp.notifications.outputMessage(new NotifyMessageDetails(OutputMessagePriority.Error, err.toString()));

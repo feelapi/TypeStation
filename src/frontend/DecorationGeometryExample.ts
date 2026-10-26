@@ -56,9 +56,9 @@ class GeometryDecorator {
     }
 
     IModelApp.viewManager.dropDecorator(this);
-    this._texture?.dispose();
+    this._texture?.[Symbol.dispose]();
     this._texture = undefined;
-    this._normalMap?.dispose();
+    this._normalMap?.[Symbol.dispose]();
     this._normalMap = undefined;
   }
 

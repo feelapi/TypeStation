@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { ConvexClipPlaneSet, CurvePrimitive, GrowableXYZArray, LineString3d, Point3d, PolyfaceQuery, Range3d, Transform, Vector3d } from "@itwin/core-geometry";
+import { ConvexClipPlaneSet, CurvePrimitive, GrowableXYZArray, LineString3d, Point3d, PolyfaceQuery, Range3d, SweepLineStringToFacetsOptions, Transform, Vector3d } from "@itwin/core-geometry";
 import { ColorDef, LinePixels } from "@itwin/core-common";
 import {
   BeButtonEvent, CollectTileStatus, DecorateContext, DisclosedTileTreeSet, EventHandled, GeometryTileTreeReference, GraphicType, HitDetail, IModelApp,
@@ -72,6 +72,14 @@ class TerrainDraper implements TileUser {
     const collector = new DrapeLineStringCollector(this, tolerance, range, tree.iModelTransform, inPoints);
     this.treeRef.collectTileGeometry(collector);
     collector.requestMissingTiles();
+
+    // iTwin.js 5.0: the collector gathers the tile polyfaces; the line string is draped onto each of them.
+    const options = SweepLineStringToFacetsOptions.create(Vector3d.unitZ(), undefined, true, true, true, true);
+    for (const polyface of collector.polyfaces) {
+      for (const curve of PolyfaceQuery.sweepLineStringToFacets(inPoints, polyface, options)) {
+        outStrings.push(curve instanceof LineString3d ? curve : LineString3d.create(curve.points));
+      }
+    }
 
     return collector.isAllGeometryLoaded ? "complete" : "loading";
   }
@@ -163,13 +171,13 @@ export class TerrainDrapeTool extends PrimitiveTool {
 
   private getGeometryTreeRef(vp: Viewport, modelId: string): GeometryTileTreeReference | undefined {
     let treeRef: GeometryTileTreeReference | undefined;
-    vp.forEachTileTreeRef((ref) => {
+    for (const ref of vp.getTileTreeRefs()) {
       if (!treeRef) {
         const tree = ref.treeOwner.load();
         if (tree?.modelId === modelId)
           treeRef = ref.createGeometryTreeReference();
       }
-    });
+    }
 
     return treeRef;
   }

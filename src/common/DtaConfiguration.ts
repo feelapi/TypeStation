@@ -2,7 +2,7 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import { GuidString, ProcessDetector } from "@itwin/core-bentley";
+import { GuidString } from "@itwin/core-bentley";
 
 export interface DtaBooleanConfiguration {
   // standalone-specific config:

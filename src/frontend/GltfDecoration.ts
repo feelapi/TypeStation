@@ -113,7 +113,7 @@ export class GltfDecorationTool extends Tool {
       });
 
       return true;
-    } catch (_) {
+    } catch {
       return false;
     }
   }

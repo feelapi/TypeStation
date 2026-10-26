@@ -6,7 +6,7 @@
 import { RpcProtocolEvent, RpcRequest, RpcRequestFulfillment } from "@itwin/core-common";
 import { ElectronRpcProtocol } from "./ElectronRpcProtocol";
 
-/* eslint-disable deprecation/deprecation */
+/* eslint-disable @typescript-eslint/no-deprecated */
 
 /** @internal */
 export class ElectronRpcRequest extends RpcRequest {
@@ -22,7 +22,7 @@ export class ElectronRpcRequest extends RpcRequest {
       this.protocol.requests.set(this.id, this);
       const request = await this.protocol.serialize(this);
       this.protocol.transport.sendRequest(request);
-    } catch (e) {
+    } catch {
       this.protocol.events.raiseEvent(RpcProtocolEvent.ConnectionErrorReceived, this);
     }
 
@@ -53,8 +53,8 @@ export class ElectronRpcRequest extends RpcRequest {
   }
 
   /** @internal */
-  public override dispose() {
+  public override [Symbol.dispose]() {
     this.protocol.requests.delete(this.id);
-    super.dispose();
+    super[Symbol.dispose]();
   }
 }

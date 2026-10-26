@@ -22,12 +22,21 @@ import { DialogModuleMethod, electronIpcStrings } from "../common/ElectronIpcInt
 // cSpell:ignore signin devserver webcontents copyfile unmaximize eopt
 
 class ElectronIpc implements IpcSocketBackend {
+  /**
+   * Electron 35 introduced its own `Event` type, so `IpcMainEvent` is no longer assignable to the
+   * DOM `Event` that [[IpcListener]] declares. The object Electron passes at runtime satisfies both.
+   */
+  private static asElectronListener(listener: IpcListener): (event: ElectronModule.IpcMainEvent, ...args: any[]) => void {
+    return listener as unknown as (event: ElectronModule.IpcMainEvent, ...args: any[]) => void;
+  }
+
   public addListener(channel: string, listener: IpcListener): RemoveFunction {
-    ElectronHost.ipcMain.addListener(channel, listener);
-    return () => ElectronHost.ipcMain.removeListener(channel, listener);
+    const electronListener = ElectronIpc.asElectronListener(listener);
+    ElectronHost.ipcMain.addListener(channel, electronListener);
+    return () => ElectronHost.ipcMain.removeListener(channel, electronListener);
   }
   public removeListener(channel: string, listener: IpcListener) {
-    ElectronHost.ipcMain.removeListener(channel, listener);
+    ElectronHost.ipcMain.removeListener(channel, ElectronIpc.asElectronListener(listener));
   }
   public send(channel: string, ...args: any[]): void {
     const window = ElectronHost.mainWindow ?? ElectronHost.electron.BrowserWindow.getAllWindows()[0];
@@ -123,8 +132,7 @@ export class ElectronHost {
     // However, if the file doesn't exist, it's fine to return an invalid path here - the request will just fail with net::ERR_FILE_NOT_FOUND
     try {
       assetPath = fs.realpathSync(assetPath);
-    } catch (error) {
-      // eslint-disable-next-line no-console
+    } catch {
       // console.warn(`WARNING: Frontend requested "${requestedUrl}", but ${assetPath} does not exist`);
     }
     if (!assetPath.startsWith(this.webResourcesPath))
@@ -251,7 +259,7 @@ export class ElectronHost {
 
     if (!this._developmentServer) {
       // handle any "electron://" requests and redirect them to "file://" URLs
-      this.electron.protocol.registerFileProtocol("electron", (request, callback) => callback(this.parseElectronUrl(request.url))); // eslint-disable-line deprecation/deprecation
+      this.electron.protocol.registerFileProtocol("electron", (request, callback) => callback(this.parseElectronUrl(request.url))); // eslint-disable-line @typescript-eslint/no-deprecated
     }
 
     this._openWindow(windowOptions);
@@ -271,7 +279,7 @@ export class ElectronHost {
       throw new Error("Not running under Electron");
 
     if (!this.isValid) {
-      this._electron = require("electron");
+      this._electron = require("electron"); // eslint-disable-line @typescript-eslint/no-require-imports
       this._ipc = new ElectronIpc();
       const app = this.app;
       if (!app.isReady())
@@ -307,7 +315,7 @@ class ElectronDialogHandler extends IpcHandler {
   public get channelName() { return electronIpcStrings.dialogChannel; }
   public async callDialog(method: DialogModuleMethod, ...args: any) {
     const dialog = ElectronHost.electron.dialog;
-    const dialogMethod = dialog[method] as Function;
+    const dialogMethod = Reflect.get(dialog, method) as unknown as (...args: any[]) => unknown;
     if (typeof dialogMethod !== "function")
       throw new IModelError(IModelStatus.FunctionNotFound, `illegal electron dialog method`);
 
@@ -315,7 +323,7 @@ class ElectronDialogHandler extends IpcHandler {
   }
 }
 
-function debounce(func: Function, ms: number = 200) {
+function debounce(func: (...args: any[]) => void, ms: number = 200) {
   let timeout: NodeJS.Timeout;
   return function (this: any, ...args: any[]) {
     clearTimeout(timeout);

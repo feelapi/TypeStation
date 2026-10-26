@@ -12,10 +12,10 @@ import {
 } from "@itwin/core-common";
 import { EditTools } from "@itwin/editor-frontend";
 import {
-  AccuDrawHintBuilder, AccuDrawShortcuts, AccuSnap, IModelApp, IpcApp, LocalhostIpcApp, LocalHostIpcAppOpts, RenderSystem, SelectionTool, SnapMode,
+  AccuDrawHintBuilder, AccuDrawShortcuts, AccuSnap, IModelApp, IpcApp, LocalhostIpcApp, LocalHostIpcAppOpts, RenderSystem, RotationMode, SelectionTool, SnapMode,
   TileAdmin, Tool, ToolAdmin,
 } from "@itwin/core-frontend";
-import { RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
+
 import { DtaConfiguration } from "../common/DtaConfiguration";
 import { dtaChannel, DtaIpcInterface } from "../common/DtaIpcInterface";
 import { DtaRpcInterface } from "../common/DtaRpcInterface";
@@ -54,6 +54,7 @@ import { AttachCustomRealityDataTool, registerRealityDataSourceProvider } from "
 import { MapLayersFormats } from "@itwin/map-layers-formats";
 import { OpenRealityModelSettingsTool } from "./RealityModelDisplaySettingsWidget";
 import { ITwinLocalization } from "@itwin/core-i18n";
+import { signIn, signOut } from "./signIn";
 
 class TypeStationAccuSnap extends AccuSnap {
   private readonly _activeSnaps: SnapMode[] = [SnapMode.NearestKeypoint];
@@ -68,10 +69,63 @@ class TypeStationAccuSnap extends AccuSnap {
 }
 
 class TypeStationToolAdmin extends ToolAdmin {
-  /** Process shortcut key events */
+  /**
+   * Process shortcut key events.
+   * @note iTwin.js 5.0 removed `AccuDrawShortcuts.processShortcutKey`, so the key handling it used to
+   * perform is implemented here.
+   */
   public override async processShortcutKey(keyEvent: KeyboardEvent, wentDown: boolean): Promise<boolean> {
-    if (wentDown && AccuDrawHintBuilder.isEnabled)
-      return AccuDrawShortcuts.processShortcutKey(keyEvent);
+    if (!wentDown || !AccuDrawHintBuilder.isEnabled)
+      return false;
+
+    switch (keyEvent.key.toLowerCase()) {
+      case "enter":
+        AccuDrawShortcuts.lockSmart();
+        return true;
+      case "x":
+        AccuDrawShortcuts.lockX();
+        return true;
+      case "y":
+        AccuDrawShortcuts.lockY();
+        return true;
+      case "z":
+        AccuDrawShortcuts.lockZ();
+        return true;
+      case "a":
+        AccuDrawShortcuts.lockAngle();
+        return true;
+      case "d":
+        AccuDrawShortcuts.lockDistance();
+        return true;
+      case "m":
+        AccuDrawShortcuts.changeCompassMode();
+        return true;
+      case "t":
+        AccuDrawShortcuts.setStandardRotation(RotationMode.Top);
+        return true;
+      case "f":
+        AccuDrawShortcuts.setStandardRotation(RotationMode.Front);
+        return true;
+      case "s":
+        AccuDrawShortcuts.setStandardRotation(RotationMode.Side);
+        return true;
+      case "v":
+        AccuDrawShortcuts.setStandardRotation(RotationMode.View);
+        return true;
+      case "o":
+        AccuDrawShortcuts.setOrigin();
+        return true;
+      case "c":
+        AccuDrawShortcuts.rotateCycle();
+        return true;
+      case "q":
+        return AccuDrawShortcuts.rotateAxes(true);
+      case "e":
+        return AccuDrawShortcuts.rotateToElement();
+      case "r":
+        return AccuDrawShortcuts.defineACSByPoints();
+    }
+
     return false;
   }
 }
@@ -214,12 +268,6 @@ export class TypeStation {
   public static async startup(configuration: DtaConfiguration, renderSys: RenderSystem.Options, tileAdmin: TileAdmin.Props): Promise<void> {
     let socketUrl = new URL(configuration.customOrchestratorUri || "http://localhost:3001");
     socketUrl = LocalhostIpcApp.buildUrlForSocket(socketUrl);
-    const realityDataClientOptions: RealityDataClientOptions = {
-      /** API Version. v1 by default */
-      // version?: ApiVersion;
-      /** API Url. Used to select environment. Defaults to "https://api.bentley.com/realitydata" */
-      baseUrl: `https://${process.env.IMJS_URL_PREFIX}api.bentley.com/realitydata`,
-    };
     const opts: ElectronAppOpts | LocalHostIpcAppOpts = {
       iModelApp: {
         accuSnap: new TypeStationAccuSnap(),
@@ -232,7 +280,7 @@ export class TypeStation {
           DtaRpcInterface,
           IModelReadRpcInterface,
           IModelTileRpcInterface,
-          SnapshotIModelRpcInterface,
+          SnapshotIModelRpcInterface, // eslint-disable-line @typescript-eslint/no-deprecated -- this app implements its own Electron RPC transport
         ],
         /* eslint-disable @typescript-eslint/naming-convention */
         mapLayerOptions: {

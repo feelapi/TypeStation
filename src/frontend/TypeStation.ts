@@ -2,7 +2,7 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import { Logger, LogLevel, ProcessDetector } from "@itwin/core-bentley";
+import { Logger, LogLevel } from "@itwin/core-bentley";
 import { RpcConfiguration } from "@itwin/core-common";
 import {
   GpuMemoryLimit,
@@ -84,7 +84,6 @@ function setConfigurationResults(): [renderSystemOptions: RenderSystem.Options, 
     dpiAwareViewports: false !== configuration.dpiAwareViewports,
     devicePixelRatioOverride: configuration.devicePixelRatioOverride,
     dpiAwareLOD: true === configuration.dpiAwareLOD,
-    useWebGL2: false !== configuration.useWebGL2,
     planProjections: true,
     errorOnMissingUniform: false !== configuration.errorOnMissingUniform,
     debugShaders: true === configuration.debugShaders,
@@ -163,7 +162,7 @@ const dtaFrontendMain = async () => {
   [renderSystemOptions, tileAdminProps] = setConfigurationResults();
   await TypeStation.startup(configuration, renderSystemOptions, tileAdminProps);
   if (false !== configuration.enableDiagnostics)
-    IModelApp.renderSystem.enableDiagnostics(RenderDiagnostics.All);
+    IModelApp.renderSystem.debugControl?.enableDiagnostics(RenderDiagnostics.All);
 
   if (!configuration.standalone && !configuration.customOrchestratorUri) {
     alert("Standalone iModel required. Set IMJS_STANDALONE_FILENAME in environment");
@@ -180,7 +179,7 @@ const dtaFrontendMain = async () => {
     [renderSystemOptions, tileAdminProps] = setConfigurationResults();
     await TypeStation.startup(configuration, renderSystemOptions, tileAdminProps);
     if (false !== configuration.enableDiagnostics)
-      IModelApp.renderSystem.enableDiagnostics(RenderDiagnostics.All);
+      IModelApp.renderSystem.debugControl?.enableDiagnostics(RenderDiagnostics.All);
 
     if (!configuration.standalone && !configuration.customOrchestratorUri) {
       alert("Standalone iModel required. Set IMJS_STANDALONE_FILENAME in environment");
@@ -200,7 +199,7 @@ const dtaFrontendMain = async () => {
           const response = await fetch(`${url}tileset.json`);
           await response.json();
           return url;
-        } catch (_) {
+        } catch {
           // No tileset available.
           return undefined;
         }
@@ -230,7 +229,7 @@ const dtaFrontendMain = async () => {
         }
       } catch (error) {
         configuration.standalone = origStandalone;
-        alert(`Error getting hub iModel: ${error}`);
+        alert(`Error getting hub iModel: ${String(error)}`);
       }
     }
 
@@ -297,7 +296,7 @@ async function initView(iModel: IModelConnection | undefined) {
 
 // Set up the HTML UI elements and wire them to our functions
 async function displayUi() {
-  return new Promise<void>(async (resolve) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+  return new Promise<void>(async (resolve) => {
     showSpinner();
     resolve();
   });
